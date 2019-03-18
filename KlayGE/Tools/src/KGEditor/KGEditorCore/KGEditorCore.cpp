@@ -37,6 +37,8 @@ namespace
 	class RenderAxis : public Renderable
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((Renderable))
+
 		explicit RenderAxis()
 			: Renderable(L"Axis")
 		{
@@ -79,6 +81,8 @@ namespace
 	class RenderableTranslationAxis : public Renderable
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((Renderable))
+
 		RenderableTranslationAxis()
 			: Renderable(L"TranslationAxis")
 		{
@@ -205,6 +209,8 @@ namespace
 	class RenderableRotationAxis : public Renderable
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((Renderable))
+
 		RenderableRotationAxis()
 			: Renderable(L"RotationAxis")
 		{
@@ -311,6 +317,8 @@ namespace
 	class RenderableScalingAxis : public Renderable
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((Renderable))
+
 		RenderableScalingAxis()
 			: Renderable(L"ScalingAxis")
 		{
@@ -474,6 +482,8 @@ namespace
 	class RenderGrid : public Renderable
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((Renderable))
+
 		RenderGrid()
 			: Renderable(L"Grid")
 		{
@@ -568,7 +578,7 @@ namespace KlayGE
 		Context::Instance().SceneManagerInstance().SceneRootNode().AddChild(grid_);
 
 		sky_box_ = MakeSharedPtr<SceneNode>(MakeSharedPtr<RenderableSkyBox>(), SceneNode::SOA_NotCastShadow);
-		checked_pointer_cast<RenderableSkyBox>(sky_box_->GetRenderable())->CompressedCubeMap(
+		sky_box_->FirstComponentOfType<RenderableSkyBox>()->CompressedCubeMap(
 			SyncLoadTexture("default_bg_y.dds", EAH_GPU_Read | EAH_Immutable),
 			SyncLoadTexture("default_bg_c.dds", EAH_GPU_Read | EAH_Immutable));
 		Context::Instance().SceneManagerInstance().SceneRootNode().AddChild(sky_box_);
@@ -577,7 +587,7 @@ namespace KlayGE
 			SceneNode::SOA_Moveable | SceneNode::SOA_NotCastShadow);
 		selected_bb_->Visible(false);
 		Context::Instance().SceneManagerInstance().SceneRootNode().AddChild(selected_bb_);
-		checked_pointer_cast<RenderableLineBox>(selected_bb_->GetRenderable())->SetColor(Color(1, 1, 1, 1));
+		selected_bb_->FirstComponentOfType<RenderableLineBox>()->SetColor(Color(1, 1, 1, 1));
 
 		translation_axis_ = MakeSharedPtr<SceneNode>(MakeSharedPtr<RenderableTranslationAxis>(),
 			SceneNode::SOA_Moveable | SceneNode::SOA_NotCastShadow);
@@ -798,7 +808,7 @@ namespace KlayGE
 
 			if (c_tex)
 			{
-				checked_pointer_cast<RenderableSkyBox>(sky_box_->GetRenderable())->CompressedCubeMap(y_tex, c_tex);
+				sky_box_->FirstComponentOfType<RenderableSkyBox>()->CompressedCubeMap(y_tex, c_tex);
 				if (ambient_light_)
 				{
 					ambient_light_->SkylightTex(y_tex, c_tex);
@@ -806,7 +816,7 @@ namespace KlayGE
 			}
 			else
 			{
-				checked_pointer_cast<RenderableSkyBox>(sky_box_->GetRenderable())->CubeMap(y_tex);
+				sky_box_->FirstComponentOfType<RenderableSkyBox>()->CubeMap(y_tex);
 				if (ambient_light_)
 				{
 					ambient_light_->SkylightTex(y_tex);
@@ -817,7 +827,7 @@ namespace KlayGE
 		{
 			TexturePtr y_cube = SyncLoadTexture("default_bg_y.dds", EAH_GPU_Read | EAH_Immutable);
 			TexturePtr c_cube = SyncLoadTexture("default_bg_y.dds", EAH_GPU_Read | EAH_Immutable);
-			checked_pointer_cast<RenderableSkyBox>(sky_box_->GetRenderable())->CompressedCubeMap(
+			sky_box_->FirstComponentOfType<RenderableSkyBox>()->CompressedCubeMap(
 				y_cube, c_cube);
 			if (ambient_light_)
 			{
@@ -1111,7 +1121,7 @@ namespace KlayGE
 		if (selected_entity_ > 0)
 		{
 			EntityInfo const & ei = entities_[selected_entity_];
-			checked_pointer_cast<RenderableLineBox>(selected_bb_->GetRenderable())->SetBox(ei.obb);
+			selected_bb_->FirstComponentOfType<RenderableLineBox>()->SetBox(ei.obb);
 
 			float3 proxy_scaling;
 			float4x4 mat;
@@ -1373,7 +1383,7 @@ namespace KlayGE
 
 	void KGEditorCore::UpdateSceneAABB()
 	{
-		scene_aabb_ = grid_->GetRenderable()->PosBound();
+		scene_aabb_ = grid_->FirstComponentOfType<Renderable>()->PosBound();
 
 		for (auto const & entity : entities_)
 		{
@@ -1512,7 +1522,7 @@ namespace KlayGE
 							}
 						}
 
-						checked_pointer_cast<RenderableTranslationAxis>(translation_axis_->GetRenderable())->HighlightAxis(selected_axis_);
+						translation_axis_->FirstComponentOfType<RenderableTranslationAxis>()->HighlightAxis(selected_axis_);
 					}
 					break;
 
@@ -1531,7 +1541,7 @@ namespace KlayGE
 							}
 						}
 
-						checked_pointer_cast<RenderableRotationAxis>(rotation_axis_->GetRenderable())->HighlightAxis(selected_axis_);
+						rotation_axis_->FirstComponentOfType<RenderableRotationAxis>()->HighlightAxis(selected_axis_);
 					}
 					break;
 
@@ -1574,7 +1584,7 @@ namespace KlayGE
 							}
 						}
 
-						checked_pointer_cast<RenderableScalingAxis>(scaling_axis_->GetRenderable())->HighlightAxis(selected_axis_);
+						scaling_axis_->FirstComponentOfType<RenderableScalingAxis>()->HighlightAxis(selected_axis_);
 					}
 					break;
 

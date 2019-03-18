@@ -45,6 +45,8 @@ namespace
 	class RenderPolygon : public StaticMesh
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((StaticMesh))
+
 		explicit RenderPolygon(std::wstring_view name)
 			: StaticMesh(name),
 				detail_type_(DT_Parallax), wireframe_(false)

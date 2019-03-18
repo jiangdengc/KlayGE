@@ -177,7 +177,7 @@ void SSSSSApp::OnCreate()
 	this->TranslucencyStrengthChangedHandler(*dialog_params_->Control<UISlider>(id_translucency_strength_slider_));
 
 	auto sky_box = MakeSharedPtr<SceneNode>(MakeSharedPtr<RenderableSkyBox>(), SceneNode::SOA_NotCastShadow);
-	checked_pointer_cast<RenderableSkyBox>(sky_box->GetRenderable())->CompressedCubeMap(y_cube, c_cube);
+	sky_box->FirstComponentOfType<RenderableSkyBox>()->CompressedCubeMap(y_cube, c_cube);
 	Context::Instance().SceneManagerInstance().SceneRootNode().AddChild(sky_box);
 }
 

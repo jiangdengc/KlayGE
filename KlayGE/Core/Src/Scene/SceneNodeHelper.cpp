@@ -71,11 +71,8 @@ namespace KlayGE
 					node->TransformToParent(MathLib::scaling(radius, radius, 1.0f) * node->TransformToParent());
 				}
 
-				node->ForEachRenderable([](Renderable& mesh)
-					{
-						auto& light_mesh = *checked_cast<RenderableLightSourceProxy*>(&mesh);
-						light_mesh.Update();
-					});
+				node->ForEachComponentOfType<RenderableLightSourceProxy>(
+					[](RenderableLightSourceProxy& light_mesh) { light_mesh.Update(); });
 			});
 	}
 

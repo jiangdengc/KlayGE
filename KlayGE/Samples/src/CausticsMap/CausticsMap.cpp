@@ -71,6 +71,8 @@ namespace
 	class ReceivePlane : public RenderablePlane
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((Renderable))
+
 		ReceivePlane(float length, float width)
 			: RenderablePlane(length, width, 1, 1, true, true)
 		{
@@ -208,6 +210,8 @@ namespace
 	class RefractMesh : public StaticMesh
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((StaticMesh))
+
 		explicit RefractMesh(std::wstring_view name)
 			: StaticMesh(name)
 		{
@@ -370,6 +374,8 @@ namespace
 	class CausticsGrid : public Renderable
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((Renderable))
+
 		CausticsGrid()
 			: Renderable(L"CausticsGrid")
 		{
@@ -620,7 +626,7 @@ void CausticsMapApp::OnCreate()
 	y_cube_map_ = ASyncLoadTexture("uffizi_cross_filtered_y.dds", EAH_GPU_Read | EAH_Immutable);
 	c_cube_map_ = ASyncLoadTexture("uffizi_cross_filtered_c.dds", EAH_GPU_Read | EAH_Immutable);
 	sky_box_ = MakeSharedPtr<SceneNode>(MakeSharedPtr<RenderableSkyBox>(), SceneNode::SOA_NotCastShadow);
-	checked_pointer_cast<RenderableSkyBox>(sky_box_->GetRenderable())->CompressedCubeMap(y_cube_map_, c_cube_map_);
+	sky_box_->FirstComponentOfType<RenderableSkyBox>()->CompressedCubeMap(y_cube_map_, c_cube_map_);
 	Context::Instance().SceneManagerInstance().SceneRootNode().AddChild(sky_box_);
 
 	copy_pp_ = SyncLoadPostProcess("Copy.ppml", "Copy");

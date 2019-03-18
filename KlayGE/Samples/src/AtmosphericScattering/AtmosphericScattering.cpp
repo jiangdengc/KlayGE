@@ -33,6 +33,8 @@ namespace
 	class PlanetMesh : public StaticMesh
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((StaticMesh))
+
 		explicit PlanetMesh(std::wstring_view name)
 			: StaticMesh(name)
 		{
@@ -89,6 +91,8 @@ namespace
 	class AtmosphereMesh : public StaticMesh
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((StaticMesh))
+
 		explicit AtmosphereMesh(std::wstring_view name)
 			: StaticMesh(name)
 		{

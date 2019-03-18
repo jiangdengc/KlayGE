@@ -35,6 +35,8 @@ namespace
 	class RenderPolygon : public Renderable
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((Renderable))
+
 		RenderPolygon()
 			: Renderable(L"Polygon")
 		{

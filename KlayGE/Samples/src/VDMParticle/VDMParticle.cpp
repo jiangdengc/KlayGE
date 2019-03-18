@@ -41,6 +41,8 @@ namespace
 	class ForwardMesh : public StaticMesh
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((StaticMesh))
+
 		explicit ForwardMesh(std::wstring_view name)
 			: StaticMesh(name)
 		{

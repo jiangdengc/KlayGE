@@ -539,10 +539,7 @@ namespace KlayGE
 		{
 			if (node->VisibleMark() != BO_No)
 			{
-				node->ForEachRenderable([](Renderable& renderable)
-					{
-						renderable.ClearInstances();
-					});
+				node->ForEachComponentOfType<Renderable>([](Renderable& renderable) { renderable.ClearInstances(); });
 			}
 		}
 
@@ -550,17 +547,16 @@ namespace KlayGE
 		{
 			if (node->VisibleMark() != BO_No)
 			{
-				node->ForEachRenderable([node](Renderable& renderable)
+				node->ForEachComponentOfType<Renderable>([node](Renderable& renderable) {
+					if (renderable.Enabled() && (renderable.GetRenderTechnique() != nullptr))
 					{
-						if (renderable.Enabled() && (renderable.GetRenderTechnique() != nullptr))
+						if (0 == renderable.NumInstances())
 						{
-							if (0 == renderable.NumInstances())
-							{
-								renderable.AddToRenderQueue();
-							}
-							renderable.AddInstance(node);
+							renderable.AddToRenderQueue();
 						}
-					});
+						renderable.AddInstance(node);
+					}
+				});
 
 				++ num_objects_rendered_;
 			}

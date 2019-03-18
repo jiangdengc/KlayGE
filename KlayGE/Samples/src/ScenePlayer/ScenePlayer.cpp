@@ -354,17 +354,17 @@ void ScenePlayerApp::LoadScene(std::string const & name)
 			std::string const skybox_name = std::string(attr->ValueString());
 			if (!ResLoader::Instance().Locate(skybox_name).empty())
 			{
-				checked_pointer_cast<RenderableSkyBox>(sky_box_->GetRenderable())->CubeMap(ASyncLoadTexture(skybox_name,
+				sky_box_->FirstComponentOfType<RenderableSkyBox>()->CubeMap(ASyncLoadTexture(skybox_name,
 					EAH_GPU_Read | EAH_Immutable));
 			}
 			else if (!ResLoader::Instance().Locate(skybox_name + ".dds").empty())
 			{
-				checked_pointer_cast<RenderableSkyBox>(sky_box_->GetRenderable())->CubeMap(ASyncLoadTexture(skybox_name + ".dds",
+				sky_box_->FirstComponentOfType<RenderableSkyBox>()->CubeMap(ASyncLoadTexture(skybox_name + ".dds",
 					EAH_GPU_Read | EAH_Immutable));
 			}
 			else if (!ResLoader::Instance().Locate(skybox_name + "_y.dds").empty())
 			{
-				checked_pointer_cast<RenderableSkyBox>(sky_box_->GetRenderable())->CompressedCubeMap(
+				sky_box_->FirstComponentOfType<RenderableSkyBox>()->CompressedCubeMap(
 					ASyncLoadTexture(skybox_name + "_y.dds", EAH_GPU_Read | EAH_Immutable),
 					ASyncLoadTexture(skybox_name + "_c.dds", EAH_GPU_Read | EAH_Immutable));
 			}
@@ -385,7 +385,7 @@ void ScenePlayerApp::LoadScene(std::string const & name)
 					init_data[i].slice_pitch = init_data[i].row_pitch;
 				}
 
-				checked_pointer_cast<RenderableSkyBox>(sky_box_->GetRenderable())->CubeMap(rf.MakeTextureCube(1, 1, 1, fmt, 1, 0,
+				sky_box_->FirstComponentOfType<RenderableSkyBox>()->CubeMap(rf.MakeTextureCube(1, 1, 1, fmt, 1, 0,
 					EAH_GPU_Read | EAH_Immutable, init_data));
 			}
 

@@ -187,6 +187,8 @@ namespace
 	class OccluderMesh : public StaticMesh, public ShadowMapped
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((StaticMesh))
+
 		explicit OccluderMesh(std::wstring_view name)
 			: StaticMesh(name),
 				ShadowMapped(SHADOW_MAP_SIZE),

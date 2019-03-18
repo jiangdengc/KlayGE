@@ -38,6 +38,8 @@ namespace
 	class RenderOcean : public InfTerrainRenderable
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((InfTerrainRenderable))
+
 		RenderOcean(float base_level, float strength)
 			: InfTerrainRenderable(L"Ocean", 384)
 		{
@@ -203,7 +205,7 @@ namespace
 			base_level_ = 0;
 			strength_ = 10;
 
-			this->AddRenderable(MakeSharedPtr<RenderOcean>(base_level_, strength_));
+			this->AddComponent(MakeSharedPtr<RenderOcean>(base_level_, strength_));
 
 			ocean_plane_ = MathLib::from_point_normal(float3(0, base_level_, 0), float3(0, 1, 0));
 			reflect_mat_ = MathLib::reflect(ocean_plane_);
@@ -235,7 +237,7 @@ namespace
 
 			use_tex_array_ = re.DeviceCaps().max_texture_array_length >= ocean_param_.num_frames;
 
-			checked_pointer_cast<RenderOcean>(renderables_[0])->PatchLength(ocean_param_.patch_length);
+			checked_pointer_cast<RenderOcean>(components_[0])->PatchLength(ocean_param_.patch_length);
 
 			TexturePtr disp_tex = LoadSoftwareTexture("OceanDisplacement.dds");
 			TexturePtr grad_tex = LoadSoftwareTexture("OceanGradient.dds");
@@ -296,8 +298,8 @@ namespace
 				}
 				gradient_tex_array_->BuildMipSubLevels();
 
-				checked_pointer_cast<RenderOcean>(renderables_[0])->DisplacementMapArray(displacement_tex_array_);
-				checked_pointer_cast<RenderOcean>(renderables_[0])->GradientMapArray(gradient_tex_array_);
+				checked_pointer_cast<RenderOcean>(components_[0])->DisplacementMapArray(displacement_tex_array_);
+				checked_pointer_cast<RenderOcean>(components_[0])->GradientMapArray(gradient_tex_array_);
 			}
 			else
 			{
@@ -388,25 +390,25 @@ namespace
 			float frame = (t - floor(t)) * ocean_param_.num_frames;
 			int frame0 = static_cast<int>(frame);
 			int frame1 = frame0 + 1;
-			checked_pointer_cast<RenderOcean>(renderables_[0])->InterpolateFrac(frame - frame0);
+			checked_pointer_cast<RenderOcean>(components_[0])->InterpolateFrac(frame - frame0);
 			frame0 %= ocean_param_.num_frames;
 			frame1 %= ocean_param_.num_frames;
 			if (use_tex_array_)
 			{
-				checked_pointer_cast<RenderOcean>(renderables_[0])->Frames(int2(frame0, frame1));
+				checked_pointer_cast<RenderOcean>(components_[0])->Frames(int2(frame0, frame1));
 			}
 			else
 			{
-				checked_pointer_cast<RenderOcean>(renderables_[0])->DisplacementMap(displacement_tex_[frame0], displacement_tex_[frame1]);
-				checked_pointer_cast<RenderOcean>(renderables_[0])->GradientMap(gradient_tex_[frame0], gradient_tex_[frame1]);
+				checked_pointer_cast<RenderOcean>(components_[0])->DisplacementMap(displacement_tex_[frame0], displacement_tex_[frame1]);
+				checked_pointer_cast<RenderOcean>(components_[0])->GradientMap(gradient_tex_[frame0], gradient_tex_[frame1]);
 			}
-			checked_pointer_cast<RenderOcean>(renderables_[0])->DisplacementParam(displacement_params_[frame0], displacement_params_[frame1],
+			checked_pointer_cast<RenderOcean>(components_[0])->DisplacementParam(displacement_params_[frame0], displacement_params_[frame1],
 				displacement_params_[ocean_param_.num_frames + frame0], displacement_params_[ocean_param_.num_frames + frame1]);
 		}
 
 		void ReflectionTex(TexturePtr const & tex)
 		{
-			checked_pointer_cast<RenderOcean>(renderables_[0])->ReflectionTex(tex);
+			checked_pointer_cast<RenderOcean>(components_[0])->ReflectionTex(tex);
 		}
 
 		void ReflectViewParams(float3& reflect_eye, float3& reflect_at, float3& reflect_up,
@@ -525,7 +527,7 @@ namespace
 	private:
 		void GenWaveTextures()
 		{
-			checked_pointer_cast<RenderOcean>(renderables_[0])->PatchLength(ocean_param_.patch_length);
+			checked_pointer_cast<RenderOcean>(components_[0])->PatchLength(ocean_param_.patch_length);
 
 			ocean_simulator_->Parameters(ocean_param_);
 
@@ -750,6 +752,8 @@ namespace
 	class RenderableFoggySkyBox : public RenderableSkyBox
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((RenderableSkyBox))
+
 		RenderableFoggySkyBox()
 		{
 			RenderEffectPtr effect = SyncLoadRenderEffect("Ocean.fxml");
@@ -839,14 +843,14 @@ void OceanApp::OnCreate()
 
 	ocean_ = MakeSharedPtr<OceanObject>();
 	Context::Instance().SceneManagerInstance().SceneRootNode().AddChild(ocean_);
-	checked_pointer_cast<RenderOcean>(ocean_->GetRenderable())->SkylightTex(y_cube, c_cube);
-	checked_pointer_cast<RenderOcean>(ocean_->GetRenderable())->FogColor(fog_color);
+	ocean_->FirstComponentOfType<RenderOcean>()->SkylightTex(y_cube, c_cube);
+	ocean_->FirstComponentOfType<RenderOcean>()->FogColor(fog_color);
 
 	terrain_renderable->ReflectionPlane(checked_pointer_cast<OceanObject>(ocean_)->OceanPlane());
 
 	sky_box_ = MakeSharedPtr<SceneNode>(MakeSharedPtr<RenderableFoggySkyBox>(), SceneNode::SOA_NotCastShadow);
-	checked_pointer_cast<RenderableFoggySkyBox>(sky_box_->GetRenderable())->CompressedCubeMap(y_cube, c_cube);
-	checked_pointer_cast<RenderableFoggySkyBox>(sky_box_->GetRenderable())->FogColor(fog_color);
+	sky_box_->FirstComponentOfType<RenderableFoggySkyBox>()->CompressedCubeMap(y_cube, c_cube);
+	sky_box_->FirstComponentOfType<RenderableFoggySkyBox>()->FogColor(fog_color);
 	Context::Instance().SceneManagerInstance().SceneRootNode().AddChild(sky_box_);
 
 	sun_flare_ = MakeSharedPtr<LensFlareSceneObject>();

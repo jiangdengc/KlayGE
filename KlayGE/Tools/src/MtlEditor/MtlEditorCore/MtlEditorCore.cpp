@@ -35,6 +35,8 @@ namespace
 	class RenderAxis : public Renderable
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((Renderable))
+
 		RenderAxis()
 			: Renderable(L"Axis")
 		{
@@ -77,6 +79,8 @@ namespace
 	class RenderGrid : public Renderable
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((Renderable))
+
 		RenderGrid()
 			: Renderable(L"Grid")
 		{
@@ -119,6 +123,8 @@ namespace
 	class RenderImpostor : public Renderable
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((Renderable))
+
 		RenderImpostor(std::string const & name, AABBox const & aabbox)
 			: Renderable(L"RenderImpostor")
 		{
@@ -268,7 +274,7 @@ namespace KlayGE
 		default_cube_map_ = rf.MakeTextureCube(1, 1, 1, fmt, 1, 0, EAH_GPU_Read | EAH_Immutable, init_data);
 
 		sky_box_ = MakeSharedPtr<SceneNode>(MakeSharedPtr<RenderableSkyBox>(), SceneNode::SOA_NotCastShadow);
-		checked_pointer_cast<RenderableSkyBox>(sky_box_->GetRenderable())->CubeMap(default_cube_map_);
+		sky_box_->FirstComponentOfType<RenderableSkyBox>()->CubeMap(default_cube_map_);
 		Context::Instance().SceneManagerInstance().SceneRootNode().AddChild(sky_box_);
 
 		ambient_light_->SkylightTex(default_cube_map_);
@@ -277,7 +283,7 @@ namespace KlayGE
 			SceneNode::SOA_Moveable | SceneNode::SOA_NotCastShadow);
 		selected_bb_->Visible(false);
 		Context::Instance().SceneManagerInstance().SceneRootNode().AddChild(selected_bb_);
-		checked_pointer_cast<RenderableLineBox>(selected_bb_->GetRenderable())->SetColor(Color(1, 1, 1, 1));
+		selected_bb_->FirstComponentOfType<RenderableLineBox>()->SetColor(Color(1, 1, 1, 1));
 
 		this->LookAt(float3(-5, 5, -5), float3(0, 1, 0), float3(0.0f, 1.0f, 0.0f));
 		this->Proj(0.1f, 100);
@@ -432,7 +438,7 @@ namespace KlayGE
 			if (model_)
 			{
 				AABBox bb = MathLib::transform_aabb(model_->RootNode()->PosBoundWS(), camera.ViewMatrix())
-					| MathLib::transform_aabb(grid_->GetRenderable()->PosBound(), camera.ViewMatrix());
+					| MathLib::transform_aabb(grid_->FirstComponentOfType<Renderable>()->PosBound(), camera.ViewMatrix());
 				float near_plane = std::max(0.01f, bb.Min().z() * 0.8f);
 				float far_plane = std::max(near_plane + 0.1f, bb.Max().z() * 1.2f);
 				this->Proj(near_plane, far_plane);
@@ -569,18 +575,18 @@ namespace KlayGE
 
 			if (!!c_tex)
 			{
-				checked_pointer_cast<RenderableSkyBox>(sky_box_->GetRenderable())->CompressedCubeMap(y_tex, c_tex);
+				sky_box_->FirstComponentOfType<RenderableSkyBox>()->CompressedCubeMap(y_tex, c_tex);
 				ambient_light_->SkylightTex(y_tex, c_tex);
 			}
 			else
 			{
-				checked_pointer_cast<RenderableSkyBox>(sky_box_->GetRenderable())->CubeMap(y_tex);
+				sky_box_->FirstComponentOfType<RenderableSkyBox>()->CubeMap(y_tex);
 				ambient_light_->SkylightTex(y_tex);
 			}
 		}
 		else
 		{
-			checked_pointer_cast<RenderableSkyBox>(sky_box_->GetRenderable())->CubeMap(default_cube_map_);
+			sky_box_->FirstComponentOfType<RenderableSkyBox>()->CubeMap(default_cube_map_);
 			ambient_light_->SkylightTex(default_cube_map_);
 		}
 	}
@@ -1175,7 +1181,7 @@ namespace KlayGE
 			{
 				obb = MathLib::convert_to_obbox(mesh->PosBound());
 			}
-			checked_pointer_cast<RenderableLineBox>(selected_bb_->GetRenderable())->SetBox(obb);
+			selected_bb_->FirstComponentOfType<RenderableLineBox>()->SetBox(obb);
 			selected_bb_->TransformToParent(object_->TransformToParent());
 			selected_bb_->Visible(true);
 		}

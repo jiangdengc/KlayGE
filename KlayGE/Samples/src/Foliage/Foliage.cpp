@@ -37,6 +37,8 @@ namespace
 	class RenderableFoggySkyBox : public RenderableSkyBox
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((RenderableSkyBox))
+
 		RenderableFoggySkyBox()
 		{
 			RenderEffectPtr effect = SyncLoadRenderEffect("FoggySkyBox.fxml");
@@ -129,8 +131,8 @@ void FoliageApp::OnCreate()
 	Context::Instance().SceneManagerInstance().SceneRootNode().AddChild(terrain_);
 
 	sky_box_ = MakeSharedPtr<SceneNode>(MakeSharedPtr<RenderableFoggySkyBox>(), SceneNode::SOA_NotCastShadow);
-	checked_pointer_cast<RenderableFoggySkyBox>(sky_box_->GetRenderable())->CompressedCubeMap(y_cube, c_cube);
-	checked_pointer_cast<RenderableFoggySkyBox>(sky_box_->GetRenderable())->FogColor(fog_color);
+	sky_box_->FirstComponentOfType<RenderableFoggySkyBox>()->CompressedCubeMap(y_cube, c_cube);
+	sky_box_->FirstComponentOfType<RenderableFoggySkyBox>()->FogColor(fog_color);
 	Context::Instance().SceneManagerInstance().SceneRootNode().AddChild(sky_box_);
 
 	sun_flare_ = MakeSharedPtr<LensFlareSceneObject>();
@@ -233,11 +235,11 @@ void FoliageApp::DoUpdateOverlay()
 		<< deferred_rendering_->NumVerticesRendered() << " Vertices";
 	font_->RenderText(0, 36, Color(1, 1, 1, 1), stream.str(), 16);
 
-	if (!checked_cast<ProceduralTerrain*>(terrain_->GetRenderable().get())->UseDrawIndirect())
+	if (!terrain_->FirstComponentOfType<ProceduralTerrain>()->UseDrawIndirect())
 	{
 		stream.str(L"");
-		stream << checked_cast<ProceduralTerrain*>(terrain_->GetRenderable().get())->Num3DPlants() << " 3D plants "
-			<< checked_cast<ProceduralTerrain*>(terrain_->GetRenderable().get())->NumImpostorPlants() << " impostor plants";
+		stream << terrain_->FirstComponentOfType<ProceduralTerrain>()->Num3DPlants() << " 3D plants "
+			<< terrain_->FirstComponentOfType<ProceduralTerrain>()->NumImpostorPlants() << " impostor plants";
 		font_->RenderText(0, 54, Color(1, 1, 1, 1), stream.str(), 16);
 	}
 }

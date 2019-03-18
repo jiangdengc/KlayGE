@@ -36,6 +36,8 @@ namespace
 	class RenderTeapot : public StaticMesh
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((StaticMesh))
+
 		explicit RenderTeapot(std::wstring_view name)
 			: StaticMesh(name)
 		{
@@ -203,10 +205,10 @@ uint32_t VideoTextureApp::DoUpdate(uint32_t /*pass*/)
 	}		
 	re.CurFrameBuffer()->Clear(FrameBuffer::CBM_Color | FrameBuffer::CBM_Depth, clear_clr, 1.0f, 0);
 
-	checked_pointer_cast<RenderTeapot>(object_->GetRenderable())->VideoTexture(se.PresentTexture());
-	checked_pointer_cast<RenderTeapot>(object_->GetRenderable())->LightPos(light_->Position());
-	checked_pointer_cast<RenderTeapot>(object_->GetRenderable())->LightColor(light_->Color());
-	checked_pointer_cast<RenderTeapot>(object_->GetRenderable())->LightFalloff(light_->Falloff());
+	object_->FirstComponentOfType<RenderTeapot>()->VideoTexture(se.PresentTexture());
+	object_->FirstComponentOfType<RenderTeapot>()->LightPos(light_->Position());
+	object_->FirstComponentOfType<RenderTeapot>()->LightColor(light_->Color());
+	object_->FirstComponentOfType<RenderTeapot>()->LightFalloff(light_->Falloff());
 
 	return App3DFramework::URV_NeedFlush | App3DFramework::URV_Finished;
 }

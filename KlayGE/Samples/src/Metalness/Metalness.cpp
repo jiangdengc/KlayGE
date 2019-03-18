@@ -39,6 +39,8 @@ namespace
 	class MetalRenderable : public StaticMesh
 	{
 	public:
+		BOOST_TYPE_INDEX_REGISTER_RUNTIME_CLASS((StaticMesh))
+
 		explicit MetalRenderable(std::wstring_view name)
 			: StaticMesh(name)
 		{
@@ -184,7 +186,7 @@ void MetalnessApp::OnCreate()
 		CreateModelFactory<RenderModel>, CreateMeshFactory<MetalRenderable>);
 
 	sky_box_ = MakeSharedPtr<SceneNode>(MakeSharedPtr<RenderableSkyBox>(), SceneNode::SOA_NotCastShadow);
-	checked_pointer_cast<RenderableSkyBox>(sky_box_->GetRenderable())->CompressedCubeMap(y_cube_map, c_cube_map);
+	sky_box_->FirstComponentOfType<RenderableSkyBox>()->CompressedCubeMap(y_cube_map, c_cube_map);
 	Context::Instance().SceneManagerInstance().SceneRootNode().AddChild(sky_box_);
 
 	this->LookAt(float3(0.0f, 0.3f, -0.9f), float3(0, 0, 0));
